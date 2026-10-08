@@ -1,4 +1,4 @@
-# ⚡ NammaPower — Smart Electricity Intelligence
+# ⚡ Namma Electricity — Smart Electricity Intelligence
 
 > **Understand. Predict. Optimize. Save.**
 > A context-aware electricity management platform for urban households.
@@ -7,7 +7,7 @@
 
 ## 🚀 Overview
 
-**NammaPower** helps households understand and optimize electricity usage by combining **consumption data, appliance behaviour, electricity tariffs, subsidy rules, and local outage reliability** into one decision-support platform.
+**Namma Electricity** helps households understand and optimize electricity usage by combining **consumption data, appliance behaviour, electricity tariffs, subsidy rules, and local outage reliability** into one decision-support platform.
 
 Instead of simply displaying electricity usage, NammaPower turns household data into **personalized, actionable recommendations**.
 
@@ -53,7 +53,7 @@ Instead of simply displaying electricity usage, NammaPower turns household data 
 
 ## 🧪 Research Direction
 
-NammaPower explores **context-aware residential energy management** by combining:
+Namma Electricity explores **context-aware residential energy management** by combining:
 
 ```text
 Consumption + Appliances + Tariffs + Subsidies + Local Reliability
