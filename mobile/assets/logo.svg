@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">NammaPower lightning emblem</title>
+  <desc id="desc">A yellow lightning emblem on a charcoal background.</desc>
+  <rect width="512" height="512" fill="#24282d"/>
+  <g fill="#fbc21b">
+    <path d="M28 29 112 88 67 99 126 164 41 107 78 96Z"/>
+    <path d="M484 29 400 88 445 99 386 164 471 107 434 96Z"/>
+    <path d="M191 42h150l-39 131h77l-169 218 32-116H145L191 42Zm18 12-48 209h79l-28 105 143-183h-70l38-131h-114Z"/>
+  </g>
+</svg>

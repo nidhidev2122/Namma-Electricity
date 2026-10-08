@@ -1,0 +1,20 @@
+{
+  "name": "nammapower",
+  "private": true,
+  "version": "2.0.0",
+  "description": "NammaPower full-stack electricity management platform",
+  "scripts": {
+    "web:dev": "npm --prefix frontend run dev",
+    "web:build": "npm --prefix frontend run build",
+    "web:test": "npm --prefix frontend test",
+    "api:dev": "npm --prefix backend run dev",
+    "api:test": "npm --prefix backend test",
+    "api:migrate": "npm --prefix backend run migrate",
+    "db:up": "docker compose up -d postgres",
+    "db:down": "docker compose down",
+    "mobile:start": "npm --prefix mobile start",
+    "mobile:android": "npm --prefix mobile run android",
+    "mobile:ios": "npm --prefix mobile run ios",
+    "mobile:web": "npm --prefix mobile run web"
+  }
+}

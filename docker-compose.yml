@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: nammapower
+      POSTGRES_USER: nammapower_app
+      POSTGRES_PASSWORD: change-me
+    ports:
+      - "5432:5432"
+    volumes:
+      - nammapower-postgres:/var/lib/postgresql/data
+
+volumes:
+  nammapower-postgres:
