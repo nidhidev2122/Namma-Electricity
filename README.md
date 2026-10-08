@@ -5,7 +5,7 @@
 
 ---
 
-## 🚀 Overview
+##  Overview
 
 **Namma Electricity** helps households understand and optimize electricity usage by combining **consumption data, appliance behaviour, electricity tariffs, subsidy rules, and local outage reliability** into one decision-support platform.
 
@@ -13,7 +13,7 @@ Instead of simply displaying electricity usage, NammaPower turns household data 
 
 ---
 
-## ✨ Features
+##  Features
 
 ### 📊 Consumption Intelligence
 
@@ -65,7 +65,7 @@ The research goal is to determine whether combining these contextual factors can
 
 ---
 
-## 🛠 Tech Stack
+## Tech Stack
 
 | Layer          | Technology                        |
 | -------------- | --------------------------------- |
@@ -78,7 +78,7 @@ The research goal is to determine whether combining these contextual factors can
 
 ---
 
-## 🗺️ Roadmap
+##  Roadmap
 
 * [ ] Consumption forecasting
 * [ ] Appliance scheduling optimization
