@@ -12,6 +12,21 @@
 Instead of simply displaying electricity usage, NammaPower turns household data into **personalized, actionable recommendations**.
 
 ---
+🎯 Problem
+
+Households often struggle to understand why their electricity bills change, how their usage relates to tariff or subsidy rules, and how to plan for power interruptions.
+
+💡 Proposed Solution
+
+Namma Electricity aims to turn household electricity data into practical insights through:
+
+Bill Intelligence: Estimate bills and explain applicable tariff or subsidy rules.
+
+Usage Insights: Identify consumption patterns and estimate appliance-level energy use.
+
+Personalized Recommendations: Explore ways to reduce consumption and potential costs.
+
+Reliability Insights: Analyze reported local outages and help households plan backup power.
 
 ##  Features
 
