@@ -86,7 +86,7 @@ The research goal is to determine whether combining these contextual factors can
 | -------------- | --------------------------------- |
 | Frontend       | React / TypeScript / Tailwind CSS |
 | Backend        | Python / FastAPI                  |
-| Database       | PostgreSQL / Supabase             |
+| Database       | PostgreSQL / Docker             |
 | Analytics      | Python / Pandas / NumPy           |
 | ML             | Scikit-learn                      |
 | Authentication | Supabase Auth                     |
