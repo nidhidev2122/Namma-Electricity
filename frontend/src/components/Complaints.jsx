@@ -13,7 +13,7 @@ export default function Complaints() {
   const t = COMPLAINT_TYPES.find(c => c.id === type);
   const text = fillTemplate(t.text, { area: area.division_name, code: area.subdivision_code, account });
 
-  const copy = () => navigator.clipboard?.writeText(text);
+  const copy = () => { try { navigator.clipboard?.writeText(text)?.catch(() => {}); } catch { /* clipboard blocked */ } };
 
   return (
     <div className="stack">

@@ -26,7 +26,7 @@ export default function Appliances() {
 
   const estimate = monthlyUnits(appliances);
   const projected = Math.max(unitsSoFar, estimate);
-  const bill = computeBill({ units: projected, sanctionedKw: settings.sanctionedKw, gruhaJyothi: settings.gruhaJyothi });
+  const bill = computeBill({ units: projected, sanctionedKw: settings.sanctionedKw, gruhaJyothi: settings.gruhaJyothi, entitlementUnits: settings.entitlementUnits || null });
   const hasEv = appliances.some(a => a.ev);
   const offPeak = isOffPeak();
 
@@ -53,13 +53,14 @@ export default function Appliances() {
         <p>
           Using <b>{Math.round(unitsSoFar)}</b> units; the appliances below add up to about <b>{estimate}</b> units a month.
           Projected bill: <b>{inr(bill.payable)}</b>
-          {bill.waived && ' (Gruha Jyothi zero bill)'}.
+          {bill.waived && ' (within your Gruha Jyothi entitlement)'}{bill.status === 'entitlement_unknown' && ' (worst case; entitlement not set)'}.
         </p>
-        {settings.gruhaJyothi && (
-          <div className="bar"><div style={{ width: `${Math.min(100, (projected / TARIFF.gruhaJyothiCap) * 100)}%` }}
-            className={projected >= TARIFF.gruhaJyothiWarn ? 'bar-hot' : ''} /></div>
+        {settings.gruhaJyothi && settings.entitlementUnits && (
+          <div className="bar"><div style={{ width: `${Math.min(100, (projected / settings.entitlementUnits) * 100)}%` }}
+            className={projected >= settings.entitlementUnits - 20 ? 'bar-hot' : ''} /></div>
         )}
-        {settings.gruhaJyothi && <small>Alert fires at {TARIFF.gruhaJyothiWarn} units; the subsidy ends after {TARIFF.gruhaJyothiCap}.</small>}
+        {settings.gruhaJyothi && settings.entitlementUnits && <small>Alert fires 20 units before your {settings.entitlementUnits}-unit entitlement.</small>}
+        {settings.gruhaJyothi && !settings.entitlementUnits && <small>Set your entitlement in the Gruha Jyothi tab to get a limit alert.</small>}
         {notifPerm === 'default' && <button className="btn" onClick={askNotifications}>Turn on alerts</button>}
         {notifPerm === 'denied' && <small>Notifications are blocked in the browser; alerts will still appear below.</small>}
       </Card>

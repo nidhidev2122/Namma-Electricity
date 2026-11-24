@@ -12,7 +12,7 @@ export default function Bills() {
     try { return JSON.parse(localStorage.getItem('np.billHistory') || '[]'); } catch { return []; }
   });
 
-  const bill = computeBill({ units: Number(units), sanctionedKw: settings.sanctionedKw, gruhaJyothi: settings.gruhaJyothi });
+  const bill = computeBill({ units: Number(units), sanctionedKw: settings.sanctionedKw, gruhaJyothi: settings.gruhaJyothi, entitlementUnits: settings.entitlementUnits || null });
   const dg = dgVsGrid({ units: Number(aptUnits), dgRate: Number(dgRate), sanctionedKw: settings.sanctionedKw });
   useEffect(() => {
     const month = new Date().toISOString().slice(0, 7);
@@ -30,7 +30,7 @@ export default function Bills() {
 
   return (
     <div className="stack">
-      <Card title="Bill estimator (LT-1 domestic)">
+      <Card title="Quick bill calculator (LT-1 domestic)">
         <div className="grid2">
           <label className="field"><span>Units</span>
             <input type="number" min="0" value={units} onChange={e => setUnits(e.target.value)} /></label>
@@ -50,11 +50,10 @@ export default function Bills() {
             <tr className="total"><td>You pay</td><td>{inr(bill.payable)}</td></tr>
           </tbody>
         </table>
-        {bill.waived && <p className="good">Gruha Jyothi covers this bill in full.</p>}
-        {settings.gruhaJyothi && !bill.waived && (
-          <p className="warn">Over {TARIFF.gruhaJyothiCap} units the subsidy does not apply, and the whole bill is payable.</p>
-        )}
-        <small>Rates are editable placeholders based on the 2026-27 LT-1 figures you supplied; confirm them with the current KERC order.</small>
+        {bill.status === 'within' && <p className="good">Within your Gruha Jyothi entitlement, so this bill is covered.</p>}
+        {bill.status === 'entitlement_unknown' && <p className="warn">Registered, but your entitlement is not set, so we show the full bill as the worst case. Set it in the Gruha Jyothi tab.</p>}
+        {bill.status === 'over' && <p className="warn">Over your entitlement. You pay between {inr(bill.payableLow)} and {inr(bill.payable)} depending on how your bill treats the extra units.</p>}
+        <small>Working rates supplied by the app owner, not a verified KERC copy. Confirm with the current tariff order.</small>
       </Card>
 
       <Card title="Bill history">

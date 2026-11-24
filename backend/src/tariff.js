@@ -1,33 +1,30 @@
-// KERC LT-1 domestic bill maths. Rates live in one object so they can be swapped
-// for the row in bescom_tariff_rates when a new tariff order lands.
+// Server-side tariff maths, kept self-contained so the backend deploys on its own.
+// Working rates, not a verified copy of the KERC order. Confirm with BESCOM / the official order.
+// NOTE: this follows the rules in tests/tariff.test.js (Gruha Jyothi waives the whole bill at or
+// under the cap, and negative units are rejected). shared/engine/tariff.js is intentionally
+// different (entitlement treated as unconfirmed). Reconcile the two before relying on either.
 export const TARIFF = {
-  energy: 5.8,          // Rs/kWh
-  fixedPerKw: 150,      // Rs per sanctioned kW per month
-  pgSurcharge: 0.35,    // Rs/kWh
-  fppca: 0.38,          // Rs/kWh fuel and power purchase adjustment
-  dutyRate: 0.09,       // state electricity duty on the whole subtotal
-  gruhaJyothiCap: 200,  // units/month; above this the scheme gives nothing
-  dgMin: 18,
-  dgMax: 25
+  energy: 5.8, fixedPerKw: 150, pgSurcharge: 0.35, fppca: 0.38, dutyRate: 0.09,
+  gruhaJyothiCap: 200, dgMin: 18, dgMax: 25
 };
 
 const r2 = n => Math.round(n * 100) / 100;
 
 export function computeBill({ units, sanctionedKw = 1, gruhaJyothi = false, tariff = TARIFF }) {
-  if (!(units >= 0)) throw new Error('units must be a non-negative number');
-  const energy = r2(units * tariff.energy);
+  const u = Number(units);
+  if (!Number.isFinite(u) || u < 0) throw new RangeError('units must be a non-negative number');
+  const energy = r2(u * tariff.energy);
   const fixed = r2(sanctionedKw * tariff.fixedPerKw);
-  const pg = r2(units * tariff.pgSurcharge);
-  const fppca = r2(units * tariff.fppca);
+  const pg = r2(u * tariff.pgSurcharge);
+  const fppca = r2(u * tariff.fppca);
   const duty = r2((energy + fixed + pg + fppca) * tariff.dutyRate);
   const gross = r2(energy + fixed + pg + fppca + duty);
-  const waived = gruhaJyothi && units <= tariff.gruhaJyothiCap;
-  return { units, energy, fixed, pg, fppca, duty, gross, waived, payable: waived ? 0 : gross };
+  const waived = Boolean(gruhaJyothi && u <= tariff.gruhaJyothiCap);
+  return { units: u, energy, fixed, pg, fppca, duty, gross, waived, payable: waived ? 0 : gross };
 }
 
-// Apartment view: BESCOM bill spread over the units vs the same units on the RWA diesel set.
-export function dgVsGrid({ units, dgRate, sanctionedKw = 1, tariff = TARIFF }) {
-  const grid = computeBill({ units, sanctionedKw, tariff }).gross;
+export function dgVsGrid({ units, dgRate, sanctionedKw = 1 }) {
+  const grid = computeBill({ units, sanctionedKw }).gross;
   const dg = r2(units * dgRate);
-  return { grid, dg, gridPerUnit: units ? r2(grid / units) : 0, extraOnDg: r2(dg - grid) };
+  return { grid, dg, extraOnDg: r2(dg - grid), gridPerUnit: units ? r2(grid / units) : 0 };
 }

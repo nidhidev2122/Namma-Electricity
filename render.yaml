@@ -1,0 +1,19 @@
+# One free Render web service runs the API and serves the built frontend on the same domain.
+# Database: create a free Postgres on Neon (neon.tech) and paste its connection string as DATABASE_URL.
+services:
+  - type: web
+    name: nammapower
+    runtime: node
+    plan: free
+    buildCommand: npm --prefix frontend ci && npm --prefix frontend run build && npm --prefix backend ci
+    startCommand: cd backend && npm run migrate && npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: 22
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: ADMIN_EMAILS
+        sync: false

@@ -16,7 +16,7 @@ export default function Settings() {
 
   function resetLocalData() {
     localStorage.clear();
-    setSettings({ sanctionedKw: 2, gruhaJyothi: true });
+    setSettings({ sanctionedKw: 2, gruhaJyothi: false, entitlementUnits: null, avgPastUnits: null });
     setStatus('Local data reset. Reload the app to restore all defaults.');
   }
 
@@ -75,6 +75,8 @@ export default function Settings() {
         onChange={e => setSettings({...settings, gruhaJyothi: e.target.checked})} />
         I am enrolled in Gruha Jyothi
       </label>
+      <label className="field"><span>Theme</span><select value={settings.theme || 'black'} onChange={e => setSettings({...settings, theme: e.target.value})}><option value="black">Black</option><option value="light">Light</option></select></label>
+      <label className="field"><span>Theme</span><select value={settings.theme || 'black'} onChange={e => setSettings({...settings, theme: e.target.value})}><option value="black">Black</option><option value="light">Light</option></select></label>
     </Card>
     <Card title="Alerts">
       <p className="muted">Alerts are stored locally and shown in the Appliances screen.</p>

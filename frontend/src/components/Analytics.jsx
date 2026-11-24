@@ -12,20 +12,20 @@ export default function Analytics() {
   const area = useArea();
   const applianceUnits = monthlyUnits(appliances);
   const units = Math.max(Number(unitsSoFar) || 0, applianceUnits);
-  const bill = computeBill({units, sanctionedKw: settings.sanctionedKw, gruhaJyothi: settings.gruhaJyothi});
+  const bill = computeBill({units, sanctionedKw: settings.sanctionedKw, gruhaJyothi: settings.gruhaJyothi, entitlementUnits: settings.entitlementUnits || null});
   const largest = [...appliances].sort((a, b) => b.watts * b.hoursPerDay - a.watts * a.hoursPerDay)[0];
   return <div className="stack">
     <AreaPicker />
     <div className="grid3">
       <Card title="Monthly usage"><strong className="metric">{Math.round(units)} units</strong><small>Meter and appliance estimate</small></Card>
-      <Card title="Estimated bill"><strong className="metric">{inr(bill.payable)}</strong><small>{bill.waived ? 'Gruha Jyothi applied' : 'Payable estimate'}</small></Card>
+      <Card title="Estimated bill"><strong className="metric">{inr(bill.payable)}</strong><small>{bill.waived ? 'Within your Gruha Jyothi entitlement' : bill.status === 'entitlement_unknown' ? 'Worst case; set your entitlement in Gruha Jyothi' : 'Payable estimate'}</small></Card>
       <Card title="Peak draw"><strong className="metric">{intervals.peakKw || 0} kW</strong><small>{intervals.count || 0} meter readings</small></Card>
     </div>
     <Card title="Usage breakdown">
       <Bar label="Meter usage" value={Math.round(Number(unitsSoFar) || 0)} max={Math.max(units, 1)} />
       <Bar label="Appliance plan" value={Math.round(applianceUnits)} max={Math.max(units, 1)} color="#10B981" />
-      <Bar label="Subsidy ceiling" value={Math.min(units, 200)} max={200} color="#F59E0B" />
-      <p className="muted">The 200-unit Gruha Jyothi ceiling is shown as a reference, not an official tariff confirmation.</p>
+      <Bar label="200-unit scheme limit" value={Math.min(units, 200)} max={200} color="#F59E0B" />
+      <p className="muted">The 200-unit limit is a reference only. Your own entitlement decides what is covered; see the Gruha Jyothi tab.</p>
     </Card>
     <Card title="Area signal">
       <div className="row"><span>Reliability score</span><b>{area.reliability_score}/100</b></div>

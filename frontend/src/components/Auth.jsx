@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { login, register } from '../api.js';
 
-export default function Auth({ onAuthenticated, onOffline }) {
+export default function Auth({ onAuthenticated, onOffline, onBack }) {
   const [mode, setMode] = useState('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -24,7 +24,7 @@ export default function Auth({ onAuthenticated, onOffline }) {
 
   return <main className="auth-page">
     <section className="auth-panel">
-      <div className="brand auth-brand"><img className="brand-mark" src="/nammapower-lightning.svg" alt="" /><div><strong>NammaPower</strong><small>Energy OS · Bengaluru</small></div></div>
+      <div className="brand auth-brand"><img className="brand-mark" src="/namma-electricity-logo.png" alt="" /><div><strong>NammaPower</strong><small>Energy OS · Bengaluru</small></div></div>
       <span className="eyebrow">Private energy workspace</span>
       <h1>{mode === 'login' ? 'Welcome back' : 'Create your account'}</h1>
       <p className="muted">{mode === 'login' ? 'Sign in to sync your energy data across sessions.' : 'Use an email and password to start a private workspace.'}</p>
@@ -39,6 +39,7 @@ export default function Auth({ onAuthenticated, onOffline }) {
       </button>
       <div className="auth-divider"><span>or</span></div>
       <button className="btn auth-offline" onClick={onOffline}>Continue with offline demo</button>
+      {onBack && <button className="auth-back" onClick={onBack}>← Back to exploration</button>}
       <p className="auth-privacy">Passwords are hashed before storage. We never ask for Aadhaar, phone numbers, or consumer IDs.</p>
     </section>
   </main>;

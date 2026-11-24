@@ -6,9 +6,10 @@ test('bill matches the backend engine', () => {
   assert.equal(computeBill({ units: 100, sanctionedKw: 1 }).gross, 875.27);
 });
 
-test('subsidy applies at 200 and not at 201', () => {
-  assert.equal(computeBill({ units: 200, gruhaJyothi: true }).payable, 0);
-  assert.ok(computeBill({ units: 201, gruhaJyothi: true }).payable > 0);
+test('under 200 units is not assumed free; a known entitlement waives within it', () => {
+  assert.ok(computeBill({ units: 120, gruhaJyothi: true }).payable > 0);
+  assert.equal(computeBill({ units: 120, gruhaJyothi: true, entitlementUnits: 130 }).payable, 0);
+  assert.ok(computeBill({ units: 140, gruhaJyothi: true, entitlementUnits: 130 }).payable > 0);
 });
 
 test('ups sizing for 400 W and 3 h', () => {

@@ -123,3 +123,30 @@ export async function submitReport({ subdivisionId, kind, note }) {
 export function syncAlert(alertType, estCostImpactInr) {
   call('/api/alerts', { method: 'POST', body: JSON.stringify({ alertType, estCostImpactInr }) }).catch(() => {});
 }
+
+// --- v2.1 Power Pulse -------------------------------------------------------
+// Official notices and community reports are kept apart end to end. Offline, official notices are simply empty.
+export async function getPulse(code) {
+  try {
+    return await call(`/api/pulse/${encodeURIComponent(code)}`);
+  } catch {
+    const dayAgo = Date.now() - 864e5;
+    const reports = localReports().filter(r => r.subdivision_id === code && r.ts > dayAgo)
+      .map(r => ({ id: r.ts, rk: 'local', kind: r.kind, note: r.note, area_label: r.areaLabel || null, started_at: r.startedAt || null, created_at: new Date(r.ts).toISOString() }));
+    return { official: [], reports, offline: true };
+  }
+}
+
+export async function submitPulseReport({ subdivisionId, kind, note, startedAt, areaLabel }) {
+  const blocked = reportThrottle();
+  if (blocked) throw new Error(blocked);
+  const stamp = Date.now();
+  try {
+    await call('/api/pulse/reports', { method: 'POST', body: JSON.stringify({ subdivisionId, kind, note, startedAt, areaLabel }) });
+  } catch (err) {
+    if (BASE) throw err;
+    localStorage.setItem('np.reports', JSON.stringify([...localReports(), { subdivision_id: subdivisionId, kind, note, startedAt, areaLabel, ts: stamp }]));
+  }
+  const mine = JSON.parse(localStorage.getItem('np.mine') || '[]');
+  localStorage.setItem('np.mine', JSON.stringify([...mine, stamp]));
+}

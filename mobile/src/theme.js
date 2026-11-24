@@ -1,9 +1,9 @@
 export const C = {
-  bg: '#F5F7FA', card: '#FFFFFF', ink: '#14213D', muted: '#667085',
-  brand: '#1D4ED8', line: '#E4E7EC', red: '#EF4444', amber: '#F59E0B',
-  green: '#10B981', blueSoft: '#DBEAFE', white: '#FFFFFF'
+  bg: '#000000', card: '#0C0C0C', ink: '#F2F2F2', muted: '#A3A3A3',
+  brand: '#FFD447', line: '#262626', red: '#FF756D', amber: '#FFD447',
+  green: '#12B59D', blueSoft: '#12372F', white: '#FFFFFF'
 };
 export const shadow = {
-  shadowColor: '#14213D', shadowOpacity: 0.07, shadowRadius: 12,
+  shadowColor: '#000000', shadowOpacity: 0.35, shadowRadius: 12,
   shadowOffset: { width: 0, height: 4 }, elevation: 2
 };

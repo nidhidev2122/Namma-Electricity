@@ -1,36 +1,8 @@
-// Pure helpers: no DOM, no React, so they're easy to test.
-export const TARIFF = {
-  energy: 5.8,
-  fixedPerKw: 150,
-  pgSurcharge: 0.35,
-  fppca: 0.38,
-  dutyRate: 0.09,
-  gruhaJyothiCap: 200,
-  gruhaJyothiWarn: 180,
-  dgMin: 18,
-  dgMax: 25
-};
+// Pure helpers: no DOM, no React. Bill maths comes from the shared engine so web and API always agree.
+import { TARIFF, computeBill, dgVsGrid, inr, r2 } from '../../shared/engine/tariff.js';
+export { TARIFF, computeBill, dgVsGrid, inr };
 
-const r2 = n => Math.round(n * 100) / 100;
-export const inr = n => '\u20B9' + Number(n).toLocaleString('en-IN', { maximumFractionDigits: 2 });
-
-export function computeBill({ units, sanctionedKw = 1, gruhaJyothi = false, tariff = TARIFF }) {
-  const u = Math.max(0, Number(units) || 0);
-  const energy = r2(u * tariff.energy);
-  const fixed = r2(sanctionedKw * tariff.fixedPerKw);
-  const pg = r2(u * tariff.pgSurcharge);
-  const fppca = r2(u * tariff.fppca);
-  const duty = r2((energy + fixed + pg + fppca) * tariff.dutyRate);
-  const gross = r2(energy + fixed + pg + fppca + duty);
-  const waived = gruhaJyothi && u <= tariff.gruhaJyothiCap;
-  return { units: u, energy, fixed, pg, fppca, duty, gross, waived, payable: waived ? 0 : gross };
-}
-
-export function dgVsGrid({ units, dgRate, sanctionedKw = 1 }) {
-  const grid = computeBill({ units, sanctionedKw }).gross;
-  const dg = r2(units * dgRate);
-  return { grid, dg, extraOnDg: r2(dg - grid), gridPerUnit: units ? r2(grid / units) : 0 };
-}
+export const monthlyUnitsFor = list => r2(list.reduce((s, a) => s + (a.watts * a.hoursPerDay * (a.dutyCycle ?? 1) * 30) / 1000, 0));
 
 // Inverter: load / 0.8 power factor gives VA, plus 25% headroom for motor start-up surges.
 // Battery: Ah = (W x hours) / (V x usable depth x inverter efficiency).
@@ -48,7 +20,7 @@ export function riskFromHours(h) {
 }
 
 export function monthlyUnits(appliances) {
-  return r2(appliances.reduce((s, a) => s + (a.watts * a.hoursPerDay * 30) / 1000, 0));
+  return monthlyUnitsFor(appliances);
 }
 
 export function runtimeMinutes(app, now = Date.now()) {

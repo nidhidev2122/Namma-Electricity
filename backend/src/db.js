@@ -1,21 +1,16 @@
 import pg from 'pg';
+import { config } from './config.js';
 
-export const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL });
+let pool;
 
-// Runs fn inside a transaction with the caller's device id bound for RLS.
-// set_config(..., true) scopes it to this transaction only, so pooled connections never leak identity.
-export async function withDevice(deviceId, fn) {
-  const client = await pool.connect();
-  try {
-    await client.query('begin');
-    await client.query("select set_config('app.device_id', $1, true)", [deviceId]);
-    const out = await fn(client);
-    await client.query('commit');
-    return out;
-  } catch (err) {
-    await client.query('rollback');
-    throw err;
-  } finally {
-    client.release();
+// Created on first use so importing modules (e.g. in unit tests) never opens a connection.
+export function getPool() {
+  if (!pool) {
+    if (!config.databaseUrl) throw new Error('DATABASE_URL is not set');
+    pool = new pg.Pool({ connectionString: config.databaseUrl, max: 10, idleTimeoutMillis: 30000 });
   }
+  return pool;
 }
+
+export const query = (text, params) => getPool().query(text, params);
+export const closePool = async () => { if (pool) { await pool.end(); pool = null; } };

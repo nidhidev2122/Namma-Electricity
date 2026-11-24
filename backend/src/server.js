@@ -1,18 +1,10 @@
-import 'dotenv/config';
-import { buildApp } from './app.js';
-import { pool } from './db.js';
+import { createApp } from './app.js';
+import { config } from './config.js';
+import { closePool } from './db.js';
 
-const port = Number(process.env.PORT || 4000);
-const app = buildApp();
-const server = app.listen(port, () => console.log(`NammaPower API on :${port}`));
+if (!config.databaseUrl) { console.error('DATABASE_URL is not set. See backend/.env.example'); process.exit(1); }
 
-const shutdown = async signal => {
-  console.log(`${signal}: shutting down NammaPower API`);
-  server.close(async () => {
-    await pool.end();
-    process.exit(0);
-  });
-  setTimeout(() => process.exit(1), 10000).unref();
-};
-process.once('SIGTERM', () => shutdown('SIGTERM'));
-process.once('SIGINT', () => shutdown('SIGINT'));
+const server = createApp().listen(config.port, '0.0.0.0', () => console.log(`NammaPower API listening on :${config.port}`));
+const stop = () => server.close(async () => { await closePool(); process.exit(0); });
+process.on('SIGTERM', stop);
+process.on('SIGINT', stop);

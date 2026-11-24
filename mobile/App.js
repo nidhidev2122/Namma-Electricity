@@ -14,10 +14,11 @@ import RentBuy from './src/screens/RentBuy';
 import Complaints from './src/screens/Complaints';
 import Settings from './src/screens/Settings';
 import Analytics from './src/screens/Analytics';
+import Explore from './src/screens/Explore';
 import { currentUser, hasApi, login, register, logout } from './src/api';
 
-const TABS = [['home', 'Home'], ['map', 'Map'], ['appliances', 'Appliances'], ['bills', 'Bills'], ['coach', 'Coach'], ['analytics', 'Analytics'], ['report', 'Report'], ['rent', 'Rent/Buy'], ['complaints', 'Complaints']];
-const views = { home: Dashboard, map: MapViewScreen, appliances: Appliances, bills: Bills, coach: Coach, analytics: Analytics, report: Report, rent: RentBuy, complaints: Complaints, settings: Settings };
+const TABS = [['home', 'Home'], ['map', 'Map'], ['appliances', 'Appliances'], ['bills', 'Bills'], ['coach', 'Coach'], ['explore', 'Explore'], ['analytics', 'Analytics'], ['report', 'Report'], ['rent', 'Rent/Buy'], ['complaints', 'Complaints']];
+const views = { home: Dashboard, map: MapViewScreen, appliances: Appliances, bills: Bills, coach: Coach, explore: Explore, analytics: Analytics, report: Report, rent: RentBuy, complaints: Complaints, settings: Settings };
 
 function Shell() {
   const [tab, setTab] = useState('home');
@@ -64,6 +65,7 @@ function Shell() {
     <SafeAreaView style={s.screen}>
       <StatusBar style="dark" />
       <View style={s.header}>
+        <Image source={require('./assets/namma-electricity-logo.png')} style={{ width: 34, height: 34, marginBottom: 4 }} resizeMode="contain" />
         <Text style={s.title}>Namma Power</Text>
         <Text style={s.subtitle}>Your personal electricity companion for Bengaluru</Text>
         <Pressable onPress={async () => { await logout(); setUser(null); }}>
@@ -108,8 +110,8 @@ function AuthScreen({ email, setEmail, password, setPassword, mode, setMode, err
         <View style={{ alignItems: 'center', marginBottom: 40 }}>
           {/* FIXED LOGO: Black rounded square with the yellow bolt SVG inside */}
           <View style={{ width: 80, height: 80, backgroundColor: '#111827', borderRadius: 20, justifyContent: 'center', alignItems: 'center', marginBottom: 16 }}>
-            <Image 
-              source={require('./assets/logo.svg')} 
+              <Image 
+              source={require('./assets/namma-electricity-logo.png')} 
               style={{ width: 44, height: 44 }} 
               resizeMode="contain" 
             />

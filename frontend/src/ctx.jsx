@@ -14,7 +14,7 @@ function useLocal(key, initial) {
       return initial;
     }
   });
-  useEffect(() => localStorage.setItem(key, JSON.stringify(value)), [key, value]);
+  useEffect(() => { try { localStorage.setItem(key, JSON.stringify(value)); } catch { /* offline/private mode fallback */ } }, [key, value]);
   return [value, setValue];
 }
 
@@ -27,12 +27,15 @@ export function AppProvider({ children }) {
   const [authLoading, setAuthLoading] = useState(hasApi());
   const [profilePhoto, setProfilePhoto] = useLocal('np.profilePhoto', '');
   const [areaId, setAreaId] = useLocal('np.area', 'HSR-05');
-  const [settings, setSettings] = useLocal('np.settings', { sanctionedKw: 2, gruhaJyothi: true });
+  const [settings, setSettings] = useLocal('np.settings', { sanctionedKw: 2, gruhaJyothi: false, entitlementUnits: null, avgPastUnits: null, theme: 'black' });
   const [appliances, setAppliances] = useLocal('np.appliances', []);
   const [meterUnits, setMeterUnits] = useLocal('np.units', 0);
   const [intervals, setIntervals] = useLocal('np.intervals', { total: 0, count: 0, peakKw: 0, month: '' });
   const [alerts, setAlerts] = useLocal('np.alerts', []);
   const [ceilingMonth, setCeilingMonth] = useLocal('np.ceiling', '');
+  const [budget, setBudget] = useLocal('np.budget', 1000);
+  const [coachHistory, setCoachHistory] = useLocal('np.coachHistory', []);
+  const [billInputs, setBillInputs] = useLocal('np.billInputs', null);
   const [notifPerm, setNotifPerm] = useState(typeof Notification === 'undefined' ? 'unsupported' : Notification.permission);
 
   useEffect(() => {
@@ -78,11 +81,13 @@ export function AppProvider({ children }) {
     return () => clearInterval(id);
   }, [push, setAppliances]);
 
+  // Warn near the household's own entitlement. Without a known figure we do not guess one.
   useEffect(() => {
-    if (!settings.gruhaJyothi || unitsSoFar < TARIFF.gruhaJyothiWarn || ceilingMonth === monthKey()) return;
-    const over = computeBill({ units: TARIFF.gruhaJyothiCap + 1, sanctionedKw: settings.sanctionedKw }).gross;
+    const ent = settings.gruhaJyothi && settings.entitlementUnits ? Math.min(Number(settings.entitlementUnits), TARIFF.gruhaJyothiCap) : null;
+    if (!ent || unitsSoFar < ent - 20 || ceilingMonth === monthKey()) return;
+    const over = computeBill({ units: ent + 1, sanctionedKw: settings.sanctionedKw }).gross;
     push('gruha_jyothi_ceiling', `${Math.round(unitsSoFar)} units used this month`,
-      `The Gruha Jyothi limit is ${TARIFF.gruhaJyothiCap} units. Crossing it turns a \u20B90 bill into roughly ${inr(over)}.`, over);
+      `Your entitlement is ${ent} units. Going past it can mean paying anywhere from part of the bill to about ${inr(over)}. Check how your bill treats extra units.`, over);
     setCeilingMonth(monthKey());
   }, [unitsSoFar, settings, ceilingMonth, push, setCeilingMonth]);
 
@@ -95,7 +100,7 @@ export function AppProvider({ children }) {
     areaId, setAreaId, settings, setSettings, appliances, setAppliances,
     meterUnits, setMeterUnits, intervals, setIntervals, unitsSoFar,
     alerts, setAlerts, notifPerm, askNotifications, monthKey, user, setUser, authLoading, logout,
-    profilePhoto, setProfilePhoto
+    profilePhoto, setProfilePhoto, budget, setBudget, coachHistory, setCoachHistory, billInputs, setBillInputs
   };
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
