@@ -11,7 +11,7 @@
 
 Instead of simply displaying electricity usage, NammaPower turns household data into **personalized, actionable recommendations**.
 
-LIVE: https://namma-electricity.vercel.app/
+LIVE: https://nammaelectricity.onrender.com
 ---
 # ⚙️ Problem
 
